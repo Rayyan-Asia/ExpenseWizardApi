@@ -1,6 +1,8 @@
 package domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -20,6 +22,9 @@ public class Project {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @Size(min = 3, max = 100, message
+            = "Name must be between 10 and 200 characters")
+    @NotBlank
     private String name;
 
     private Float limit;

@@ -7,6 +7,7 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
+@Table
 @Data
 public class Project {
 

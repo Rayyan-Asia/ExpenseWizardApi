@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 @Entity
+@Table
 @Data
 public class Expense {
 

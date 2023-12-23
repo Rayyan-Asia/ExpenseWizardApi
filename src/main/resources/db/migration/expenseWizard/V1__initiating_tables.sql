@@ -22,5 +22,5 @@ CREATE TABLE Expense
     cost       FLOAT        NOT NULL,
     timestamp  TIMESTAMP    NOT NULL,
     category   INT,
-    CONSTRAINT fk_project_expense FOREIGN KEY (project_id) REFERENCES Project (id),
+    CONSTRAINT fk_project_expense FOREIGN KEY (project_id) REFERENCES Project (id)
 );

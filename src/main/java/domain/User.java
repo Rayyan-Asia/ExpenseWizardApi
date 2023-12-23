@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.Date;
 
 @Entity
+@Table
 @Data
 public class User {
 

@@ -31,6 +31,9 @@ public class User {
     @Email
     private String email;
 
+    @NotBlank
+    private String password;
+
     @Temporal(TemporalType.DATE)
     @Column(name = "birth_date")
     private Date birthDate;

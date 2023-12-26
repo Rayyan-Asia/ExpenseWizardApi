@@ -33,7 +33,7 @@ public class UserController {
     @Operation(summary = "Get user by email", description = "Retrieve user details by email")
     @GetMapping("/{email}")
     @ApiResponse(responseCode = "200", description = "User found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))
     })
     @ApiResponse(responseCode = "404", description = "User not found")
     public ResponseEntity<UserDto> getUserByEmail(
@@ -46,7 +46,7 @@ public class UserController {
     @Operation(summary = "Create a new user", description = "Add a new user to the system")
     @PostMapping("/create")
     @ApiResponse(responseCode = "201", description = "User created", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))
     })
     public ResponseEntity<UserDto> createUser(
             @Parameter(description = "User object to be created") @Valid @RequestBody UserDto user) {

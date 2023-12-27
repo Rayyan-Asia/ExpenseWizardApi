@@ -37,4 +37,7 @@ public class User {
     @Temporal(TemporalType.DATE)
     @Column(name = "birth_date")
     private Date birthDate;
+
+    @Column
+    private Role role = Role.User;
 }

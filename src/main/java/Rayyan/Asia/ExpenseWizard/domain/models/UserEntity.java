@@ -6,12 +6,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-@Table
+@Table(name = "user")
 @Data
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -39,5 +42,5 @@ public class User {
     private Date birthDate;
 
     @Column
-    private Role role = Role.User;
+    private Role role = Role.USER;
 }

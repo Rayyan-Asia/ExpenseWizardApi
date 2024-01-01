@@ -2,7 +2,7 @@ package Rayyan.Asia.ExpenseWizard.infrastructure.services;
 
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
-import Rayyan.Asia.ExpenseWizard.domain.models.User;
+import Rayyan.Asia.ExpenseWizard.domain.models.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,17 +16,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getByEmail(String email) {
+    public Optional<UserEntity> getByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Override
-    public Optional<User> getById(String id) {
+    public Optional<UserEntity> getById(String id) {
         return userRepository.findById(id);
     }
 
     @Override
-    public User save(User user) {
-        return userRepository.save(user);
+    public UserEntity save(UserEntity userEntity) {
+        return userRepository.save(userEntity);
     }
 }

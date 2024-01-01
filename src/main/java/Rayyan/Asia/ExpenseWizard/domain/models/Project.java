@@ -21,7 +21,7 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    private UserEntity userEntity;
 
     @Size(min = 3, max = 100, message
             = "Name must be between 10 and 200 characters")

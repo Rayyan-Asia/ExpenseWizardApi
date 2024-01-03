@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table
 @Data
@@ -29,4 +32,7 @@ public class Project {
     private String name;
 
     private Float limit;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Expense> expenses = new ArrayList<>();
 }

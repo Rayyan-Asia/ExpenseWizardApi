@@ -6,6 +6,7 @@ import Rayyan.Asia.ExpenseWizard.application.dto.auth.RegisterDto;
 import Rayyan.Asia.ExpenseWizard.application.mappers.UserMapper;
 import Rayyan.Asia.ExpenseWizard.application.security.JWTGenerator;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserRepository;
+import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,17 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private AuthenticationManager authenticationManager;
-    private UserRepository userRepository;
+    private UserService userService;
     private PasswordEncoder passwordEncoder;
-
     private UserMapper mapper;
-
     private JWTGenerator jwtGenerator;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper mapper, JWTGenerator jwtGenerator) {
+    public AuthController(AuthenticationManager authenticationManager, UserService userService, PasswordEncoder passwordEncoder, UserMapper mapper, JWTGenerator jwtGenerator) {
         this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.mapper = mapper;
         this.jwtGenerator = jwtGenerator;
@@ -53,12 +52,12 @@ public class AuthController {
 
     @PostMapping("register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) {
-        if (userRepository.findByEmail(registerDto.email).isPresent())
+        if (userService.getByEmail(registerDto.email).isPresent())
             return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
 
         var user = mapper.dtoToDomain(registerDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        userService.save(user);
 
         return new ResponseEntity<>("User Registration Success", HttpStatus.OK);
     }

@@ -43,4 +43,7 @@ public class UserEntity {
 
     @Column
     private Role role = Role.USER;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Project> project = new ArrayList<>();
 }

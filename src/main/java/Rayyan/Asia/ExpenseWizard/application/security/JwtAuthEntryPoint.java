@@ -10,8 +10,15 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
+    private final JWTGenerator jwtGenerator;
+
+    public JwtAuthEntryPoint(JWTGenerator jwtGenerator) {
+        this.jwtGenerator = jwtGenerator;
+    }
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+        if(!jwtGenerator.validateToken(request.getHeader("Authorization").substring(7)))
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
     }
 }

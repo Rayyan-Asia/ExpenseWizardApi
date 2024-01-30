@@ -35,9 +35,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity save(UserDto registerDto) {
+    public UserDto save(UserDto registerDto) {
         var user = mapper.dtoToDomain(registerDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
+        return mapper.domainToDto(user);
     }
 }

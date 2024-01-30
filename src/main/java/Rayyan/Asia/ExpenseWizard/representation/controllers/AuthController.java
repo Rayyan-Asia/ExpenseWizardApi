@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +27,7 @@ public class AuthController {
 
 
     @PostMapping("login")
-    public ResponseEntity<String> register(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<String> Login(@Valid @RequestBody LoginDto loginDto) {
         var userFound = userService.getByEmail(loginDto.getEmail());
         var customUserDetails = new CustomUserDetails(loginDto.getEmail(), loginDto.getPassword());
         if (userFound.isPresent()) {

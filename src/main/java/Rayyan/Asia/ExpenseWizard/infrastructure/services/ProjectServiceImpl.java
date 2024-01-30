@@ -1,5 +1,7 @@
 package Rayyan.Asia.ExpenseWizard.infrastructure.services;
 
+import Rayyan.Asia.ExpenseWizard.application.dto.models.ProjectDto;
+import Rayyan.Asia.ExpenseWizard.application.mappers.ProjectMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;
 import Rayyan.Asia.ExpenseWizard.domain.models.Project;
@@ -10,9 +12,11 @@ import java.util.Optional;
 @Service
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
+    private final ProjectMapper mapper;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper mapper) {
         this.projectRepository = projectRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -21,12 +25,15 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project save(Project project) {
-        return projectRepository.save(project);
+    public ProjectDto save(ProjectDto project) {
+        var projectModel = mapper.dtoToDomain(project);
+        projectRepository.save(projectModel);
+        return mapper.domainToDto(projectModel);
     }
 
     @Override
-    public Optional<Project> findProjectByNameAndUser(String name, String userId) {
-        return projectRepository.findProjectByNameAndUser(name,userId);
+    public Optional<ProjectDto> findProjectByNameAndUser(String name, String userId) {
+        var project = projectRepository.findProjectByNameAndUser(name,userId);
+        return project.map(mapper::domainToDto);
     }
 }

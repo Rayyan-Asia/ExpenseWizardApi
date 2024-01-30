@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/projects")
 public class ProjectController {
 
-    private final UserService userService;
     private final ProjectService projectService;
     private final ProjectMapper projectMapper;
 
-    public ProjectController(UserService userService, ProjectService projectService, ProjectMapper projectMapper) {
-        this.userService = userService;
-        this.projectService = projectService;
+    public ProjectController(ProjectService projectService, ProjectMapper projectMapper) {
+         this.projectService = projectService;
         this.projectMapper = projectMapper;
     }
 

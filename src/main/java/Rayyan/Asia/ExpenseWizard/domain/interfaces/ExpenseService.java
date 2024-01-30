@@ -1,11 +1,11 @@
 package Rayyan.Asia.ExpenseWizard.domain.interfaces;
 
-import Rayyan.Asia.ExpenseWizard.domain.models.Expense;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.ExpenseDto;
 
 import java.util.Optional;
 
 public interface ExpenseService {
-    Optional<Expense> findById(String id);
+    Optional<ExpenseDto> findById(String id);
 
-    Expense save(Expense expense);
+    ExpenseDto save(ExpenseDto expense);
 }

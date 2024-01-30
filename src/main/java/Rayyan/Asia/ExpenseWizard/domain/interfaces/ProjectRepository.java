@@ -1,7 +1,6 @@
 package Rayyan.Asia.ExpenseWizard.domain.interfaces;
 
 import Rayyan.Asia.ExpenseWizard.domain.models.Project;
-import Rayyan.Asia.ExpenseWizard.domain.models.UserEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

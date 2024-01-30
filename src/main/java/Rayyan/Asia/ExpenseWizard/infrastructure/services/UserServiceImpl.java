@@ -4,7 +4,6 @@ import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserDto;
 import Rayyan.Asia.ExpenseWizard.application.mappers.UserMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
-import Rayyan.Asia.ExpenseWizard.domain.models.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

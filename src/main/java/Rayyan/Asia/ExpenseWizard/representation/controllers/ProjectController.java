@@ -3,7 +3,6 @@ package Rayyan.Asia.ExpenseWizard.representation.controllers;
 import Rayyan.Asia.ExpenseWizard.application.dto.models.ProjectDto;
 import Rayyan.Asia.ExpenseWizard.application.mappers.ProjectMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;
-import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

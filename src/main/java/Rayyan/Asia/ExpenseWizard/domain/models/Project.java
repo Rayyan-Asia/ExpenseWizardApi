@@ -29,6 +29,7 @@ public class Project {
     @Size(min = 3, max = 100, message
             = "Name must be between 10 and 200 characters")
     @NotBlank
+    @Column(name = "project_name")
     private String name;
 
     private Float limit;

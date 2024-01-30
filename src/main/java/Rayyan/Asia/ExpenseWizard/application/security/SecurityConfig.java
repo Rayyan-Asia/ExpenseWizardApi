@@ -1,5 +1,6 @@
 package Rayyan.Asia.ExpenseWizard.application.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,23 +16,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private CustomUserDetailsService userDetailsService;
     private JwtAuthEntryPoint authEntryPoint;
-
-    @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint) {
-        this.userDetailsService = userDetailsService;
-        this.authEntryPoint = authEntryPoint;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**").permitAll() // Permit access to "/api/auth" without authentication
+        http.authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/auth/**","/swagger-ui/**").permitAll()// Permit access to "/api/auth" without authentication
                         .anyRequest().authenticated()// Require authentication for any other request
                 );
         http.csrf(AbstractHttpConfigurer::disable);

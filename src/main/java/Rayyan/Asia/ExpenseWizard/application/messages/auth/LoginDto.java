@@ -1,4 +1,4 @@
-package Rayyan.Asia.ExpenseWizard.application.dto.auth;
+package Rayyan.Asia.ExpenseWizard.application.messages.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

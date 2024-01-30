@@ -1,13 +1,16 @@
-package Rayyan.Asia.ExpenseWizard.application.dto.auth;
+package Rayyan.Asia.ExpenseWizard.application.dto.models.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 import java.util.Date;
 
-public class RegisterDto {
+@Data
+public class UserDto {
+    public String id;
 
     @Size(min = 3, max = 255, message
             = "Name must be between 3 and 255 characters")

@@ -1,5 +1,7 @@
 package Rayyan.Asia.ExpenseWizard.application.security;
 
+import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserDto;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,29 +18,37 @@ import java.io.IOException;
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JWTGenerator tokenGenerator;
-
-    @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = getJwtFromRequest(request);
-        if(StringUtils.hasText(token) && tokenGenerator.validateToken(token)){
-            var email = tokenGenerator.getEmailFromToken(token);
-            var userDetails = customUserDetailsService.loadUserByUsername(email);
-            var authenticationtoken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-            authenticationtoken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authenticationtoken);
-        }
-        filterChain.doFilter(request,response);
-    }
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        final String authorizationHeader = request.getHeader("Authorization");
 
-    private String getJwtFromRequest(HttpServletRequest request){
-        var bearerToken = request.getHeader("Authorization");
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
-            return bearerToken.substring(7);
+        String username = null;
+        String jwt = null;
+
+        // Extract JWT token from the Authorization header
+        if (StringUtils.hasText(authorizationHeader)) {
+            jwt = authorizationHeader.substring(7);
+            try {
+                username = JwtUtil.extractUsername(jwt);
+            } catch (ExpiredJwtException ignored) {
+                // Token is expired, allow the filter chain to continue
+            }
         }
-        return null;
+        UserDto userDto = new UserDto();
+        userDto.setEmail(username);
+        // Validate the extracted token and set authentication in SecurityContext
+        if (StringUtils.hasText(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            var userDetails = customUserDetailsService.loadUserByUsername(username);
+            if (JwtUtil.validateToken(jwt, userDetails)) {
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                var context = SecurityContextHolder.getContext();
+            }
+        }
+
+        chain.doFilter(request, response);
     }
 }

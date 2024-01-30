@@ -1,5 +1,6 @@
 package Rayyan.Asia.ExpenseWizard.application.security;
 
+import Rayyan.Asia.ExpenseWizard.application.dto.models.user.CustomUserDetails;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserRepository;
 import Rayyan.Asia.ExpenseWizard.domain.models.Role;
 import Rayyan.Asia.ExpenseWizard.domain.models.UserEntity;
@@ -27,14 +28,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Username Not Found"));
-        return new User(user.getEmail(), user.getPassword(), mapRolesToAuthorities(user.getRole()));
-    }
-
-    private Collection<GrantedAuthority> mapRolesToAuthorities(Role roles){
-        ArrayList<Role> list = new ArrayList<>();
-        list.add(roles);
-        return list.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toList());
+        return new CustomUserDetails(user.getEmail(), user.getPassword());
     }
 }

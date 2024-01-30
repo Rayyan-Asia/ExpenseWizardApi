@@ -4,21 +4,18 @@ import Rayyan.Asia.ExpenseWizard.application.dto.models.ExpenseDto;
 import Rayyan.Asia.ExpenseWizard.application.mappers.ExpenseMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ExpenseRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ExpenseService;
-import Rayyan.Asia.ExpenseWizard.domain.models.Expense;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ExpenseServiceImpl implements ExpenseService {
 
     private final ExpenseMapper mapper;
     private final ExpenseRepository expenseRepository;
-
-    public ExpenseServiceImpl(ExpenseMapper mapper, ExpenseRepository expenseRepository) {
-        this.mapper = mapper;
-        this.expenseRepository = expenseRepository;
-    }
 
     @Override
     public Optional<ExpenseDto> findById(String id) {

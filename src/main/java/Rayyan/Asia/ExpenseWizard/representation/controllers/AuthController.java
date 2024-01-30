@@ -6,6 +6,7 @@ import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserDto;
 import Rayyan.Asia.ExpenseWizard.application.security.JwtUtil;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthController {
 
     private final UserService userService;
-
-    @Autowired
-    public AuthController( UserService userService) {
-        this.userService = userService;
-    }
-
 
     @PostMapping("login")
     public ResponseEntity<String> Login(@Valid @RequestBody LoginDto loginDto) {

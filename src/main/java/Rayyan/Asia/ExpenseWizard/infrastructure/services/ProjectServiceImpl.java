@@ -5,19 +5,17 @@ import Rayyan.Asia.ExpenseWizard.application.mappers.ProjectMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;
 import Rayyan.Asia.ExpenseWizard.domain.models.Project;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectMapper mapper;
-
-    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper mapper) {
-        this.projectRepository = projectRepository;
-        this.mapper = mapper;
-    }
 
     @Override
     public Optional<Project> findById(String id) {

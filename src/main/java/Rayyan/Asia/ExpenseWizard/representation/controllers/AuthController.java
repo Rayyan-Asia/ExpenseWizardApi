@@ -23,7 +23,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("login")
-    public ResponseEntity<String> Login(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<String> login(@Valid @RequestBody LoginDto loginDto) {
         var userFound = userService.getByEmail(loginDto.getEmail());
         var customUserDetails = new CustomUserDetails(loginDto.getEmail(), loginDto.getPassword());
         if (userFound.isPresent()) {
@@ -35,7 +35,7 @@ public class AuthController {
 
     @PostMapping("register")
     public ResponseEntity<String> register(@Valid @RequestBody UserDto registerDto) {
-        if (userService.getByEmail(registerDto.email).isPresent())
+        if (userService.getByEmail(registerDto.getEmail()).isPresent())
             return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
         userService.save(registerDto);
         return new ResponseEntity<>("User Registration Success", HttpStatus.OK);

@@ -24,7 +24,7 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserEntity userEntity;
+    private UserEntity user;
 
     @Size(min = 3, max = 100, message
             = "Name must be between 10 and 200 characters")
@@ -32,8 +32,9 @@ public class Project {
     @Column(name = "project_name")
     private String name;
 
+    @Column(name = "project_limit")
     private Float limit;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Expense> expenses = new ArrayList<>();
 }

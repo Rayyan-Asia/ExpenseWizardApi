@@ -10,24 +10,19 @@ import java.util.Date;
 
 @Data
 public class UserDto {
-    public String id;
+    private String id;
 
     @Size(min = 3, max = 255, message
             = "Name must be between 3 and 255 characters")
     @NotBlank
-    public String name;
+    private String name;
 
     @Size(min = 3, max = 255, message
             = "Email must be between 3 and 255 characters")
     @Email
     @NotBlank
-    public String email;
-
-    @Size(min = 3, max = 255, message
-            = "Password must be between 3 and 255 characters")
-    @NotBlank
-    public String password;
+    private String email;
 
     @NotNull( message = "Birth Day is needed")
-    public Date birthDate;
+    private Date birthDate;
 }

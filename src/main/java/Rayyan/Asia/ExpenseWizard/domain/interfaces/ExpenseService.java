@@ -1,6 +1,6 @@
 package Rayyan.Asia.ExpenseWizard.domain.interfaces;
 
-import Rayyan.Asia.ExpenseWizard.application.dto.models.ExpenseDto;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.expense.ExpenseDto;
 
 import java.util.Optional;
 

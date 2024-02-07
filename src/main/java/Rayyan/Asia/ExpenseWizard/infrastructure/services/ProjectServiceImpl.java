@@ -1,6 +1,6 @@
 package Rayyan.Asia.ExpenseWizard.infrastructure.services;
 
-import Rayyan.Asia.ExpenseWizard.application.dto.models.ProjectDto;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.project.ProjectDto;
 import Rayyan.Asia.ExpenseWizard.application.mappers.ProjectMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;

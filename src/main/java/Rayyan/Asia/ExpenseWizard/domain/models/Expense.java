@@ -33,6 +33,6 @@ public class Expense {
     private Timestamp timestamp = Timestamp.from(Instant.now());
 
     @NotNull
-    @Column(name = "expense_category")
+    @Column(name = "category")
     private ExpenseCategory expenseCategory;
 }

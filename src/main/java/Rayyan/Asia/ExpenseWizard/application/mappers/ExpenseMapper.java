@@ -1,6 +1,6 @@
 package Rayyan.Asia.ExpenseWizard.application.mappers;
 
-import Rayyan.Asia.ExpenseWizard.application.dto.models.ExpenseDto;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.expense.ExpenseDto;
 import Rayyan.Asia.ExpenseWizard.domain.models.Expense;
 import org.mapstruct.Mapper;
 

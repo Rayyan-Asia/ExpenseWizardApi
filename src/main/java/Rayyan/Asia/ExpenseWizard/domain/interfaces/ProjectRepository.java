@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface ProjectRepository extends CrudRepository<Project, String> {
-    @Query("SELECT u FROM Project u WHERE u.name = :name AND u.userEntity.id = :userID")
-    Optional<Project> findProjectByNameAndUser(@Param("name") String name, @Param("user") String userId);
+    @Query("SELECT u FROM Project u WHERE u.name = :name AND u.user.id = :userId")
+    Optional<Project> findProjectByNameAndUser(@Param("name") String name, @Param("userId") String userId);
 }

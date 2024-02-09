@@ -1,8 +1,8 @@
 package Rayyan.Asia.ExpenseWizard.representation.controllers;
 
+import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserUpsertDto;
 import Rayyan.Asia.ExpenseWizard.application.messages.auth.LoginDto;
 import Rayyan.Asia.ExpenseWizard.application.dto.models.user.CustomUserDetails;
-import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserDto;
 import Rayyan.Asia.ExpenseWizard.application.security.JwtUtil;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
 import jakarta.validation.Valid;
@@ -34,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<String> register(@Valid @RequestBody UserDto registerDto) {
+    public ResponseEntity<String> register(@Valid @RequestBody UserUpsertDto registerDto) {
         if (userService.getByEmail(registerDto.getEmail()).isPresent())
             return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
         userService.save(registerDto);

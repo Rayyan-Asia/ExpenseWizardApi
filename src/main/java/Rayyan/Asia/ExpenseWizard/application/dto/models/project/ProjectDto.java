@@ -1,7 +1,5 @@
 package Rayyan.Asia.ExpenseWizard.application.dto.models.project;
 
-import Rayyan.Asia.ExpenseWizard.application.dto.models.expense.ExpenseDto;
-import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;

@@ -1,6 +1,7 @@
 package Rayyan.Asia.ExpenseWizard.infrastructure.services;
 
 import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserDto;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserUpsertDto;
 import Rayyan.Asia.ExpenseWizard.application.mappers.UserMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto save(UserDto registerDto) {
+    public UserDto save(UserUpsertDto registerDto) {
         var user = mapper.dtoToDomain(registerDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);

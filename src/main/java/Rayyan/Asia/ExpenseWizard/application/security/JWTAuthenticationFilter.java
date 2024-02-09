@@ -1,6 +1,6 @@
 package Rayyan.Asia.ExpenseWizard.application.security;
 
-import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserDto;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserUpsertDto;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,7 +36,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 // Token is expired, allow the filter chain to continue
             }
         }
-        UserDto userDto = new UserDto();
+        UserUpsertDto userDto = new UserUpsertDto();
         userDto.setEmail(username);
         // Validate the extracted token and set authentication in SecurityContext
         if (StringUtils.hasText(username) && SecurityContextHolder.getContext().getAuthentication() == null) {

@@ -35,6 +35,6 @@ public class Project {
     @Column(name = "project_limit")
     private Float limit;
 
-    @OneToMany(mappedBy = "project" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "project" ,cascade = CascadeType.ALL)
     private List<Expense> expenses = new ArrayList<>();
 }

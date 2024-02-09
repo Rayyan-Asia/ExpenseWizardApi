@@ -25,8 +25,8 @@ public class AuthController {
     @PostMapping("login")
     public ResponseEntity<String> login(@Valid @RequestBody LoginDto loginDto) {
         var userFound = userService.getByEmail(loginDto.getEmail());
-        var customUserDetails = new CustomUserDetails(loginDto.getEmail(), loginDto.getPassword());
         if (userFound.isPresent()) {
+            var customUserDetails = new CustomUserDetails(userFound.get().getId(), loginDto.getPassword());
             return new ResponseEntity<>("Authentication Successful: " + JwtUtil.generateToken(customUserDetails), HttpStatus.ACCEPTED);
         } else {
             return new ResponseEntity<>("User not Found or Access Denied, Incorrect Credentials", HttpStatus.UNAUTHORIZED);

@@ -5,10 +5,12 @@ import Rayyan.Asia.ExpenseWizard.application.mappers.ProjectMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;
 import Rayyan.Asia.ExpenseWizard.domain.models.Project;
+import Rayyan.Asia.ExpenseWizard.domain.models.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,8 +25,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDto save(ProjectDto project) {
+    public ProjectDto save(ProjectDto project, String userId) {
         var projectModel = mapper.dtoToDomain(project);
+        var user = new UserEntity();
+        user.setId(userId);
+        projectModel.setUser(user);
         projectRepository.save(projectModel);
         return mapper.domainToDto(projectModel);
     }
@@ -33,5 +38,11 @@ public class ProjectServiceImpl implements ProjectService {
     public Optional<ProjectDto> findProjectByNameAndUser(String name, String userId) {
         var project = projectRepository.findProjectByNameAndUser(name,userId);
         return project.map(mapper::domainToDto);
+    }
+
+    @Override
+    public List<ProjectDto> findProjectsByUser(String id) {
+       var projects = projectRepository.findProjectsByUserId(id);
+       return mapper.domainToDto(projects);
     }
 }

@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -31,16 +33,21 @@ public class ProjectController {
     @PostMapping()
     public ResponseEntity<ProjectDto> post(@RequestBody @Valid ProjectDto project){
         var authentication = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        var user = userService.getByEmail(authentication.getEmail());
+        var user = userService.getById(authentication.getUserId());
         if (user.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         if (projectService.findProjectByNameAndUser(project.getName(), user.get().getId()).isPresent())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+        var projectDto = projectService.save(project, user.get().getId());
 
-        project.setUser(user.get());
-        var projectDto = projectService.save(project);
+        return new ResponseEntity<>(projectDto, HttpStatus.CREATED);
+    }
 
-        return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    @GetMapping("byUser")
+    public ResponseEntity<List<ProjectDto>> getAllProjectsByUser(){
+        var authentication = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var projects = projectService.findProjectsByUser(authentication.getUserId());
+        return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 }

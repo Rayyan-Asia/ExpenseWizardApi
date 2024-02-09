@@ -44,6 +44,6 @@ public class UserEntity {
     @Column
     private Role role = Role.USER;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Project> projects = new ArrayList<>();
 }

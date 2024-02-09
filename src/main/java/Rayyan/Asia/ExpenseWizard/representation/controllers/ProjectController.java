@@ -57,11 +57,10 @@ public class ProjectController {
         var user = userService.getById(authentication.getUserId());
         if (user.isEmpty() || project.getId() == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (projectService.isProjectOwnedByUser(authentication.getUserId(), project.getId()))
+        if (!projectService.isProjectOwnedByUser(project.getId() ,authentication.getUserId()))
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        if (projectService.findById(project.getId()).isEmpty())
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         var projectDto = projectService.save(project, user.get().getId());
-        return new ResponseEntity<>(projectDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(projectDto, HttpStatus.NO_CONTENT);
     }
 }

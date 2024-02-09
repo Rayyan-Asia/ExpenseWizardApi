@@ -54,13 +54,12 @@ public class ProjectController {
     @PutMapping()
     public ResponseEntity<ProjectDto> update(@RequestBody @Valid ProjectDto project){
         var authentication = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        var user = userService.getById(authentication.getUserId());
-        if (user.isEmpty() || project.getId() == null)
+        if (project.getId() == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         if (!projectService.isProjectOwnedByUser(project.getId() ,authentication.getUserId()))
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
-        var projectDto = projectService.save(project, user.get().getId());
+        var projectDto = projectService.save(project, authentication.getUserId());
         return new ResponseEntity<>(projectDto, HttpStatus.NO_CONTENT);
     }
 }

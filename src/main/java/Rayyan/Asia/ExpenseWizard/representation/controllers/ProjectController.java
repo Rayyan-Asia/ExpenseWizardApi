@@ -50,4 +50,18 @@ public class ProjectController {
         var projects = projectService.findProjectsByUser(authentication.getUserId());
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
+
+    @PutMapping()
+    public ResponseEntity<ProjectDto> update(@RequestBody @Valid ProjectDto project){
+        var authentication = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var user = userService.getById(authentication.getUserId());
+        if (user.isEmpty() || project.getId() == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (projectService.isProjectOwnedByUser(authentication.getUserId(), project.getId()))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (projectService.findById(project.getId()).isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        var projectDto = projectService.save(project, user.get().getId());
+        return new ResponseEntity<>(projectDto, HttpStatus.CREATED);
+    }
 }

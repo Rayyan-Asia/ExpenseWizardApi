@@ -45,4 +45,9 @@ public class ProjectServiceImpl implements ProjectService {
        var projects = projectRepository.findProjectsByUserId(id);
        return mapper.domainToDto(projects);
     }
+    @Override
+    public boolean isProjectOwnedByUser(String projectId, String userId) {
+        var project = projectRepository.findById(projectId);
+        return project.map(value -> value.getUser().getId().equals(userId)).orElse(false);
+    }
 }

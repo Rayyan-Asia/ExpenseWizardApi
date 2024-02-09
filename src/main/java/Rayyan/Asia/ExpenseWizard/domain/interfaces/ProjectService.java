@@ -14,4 +14,6 @@ public interface ProjectService {
     Optional<ProjectDto> findProjectByNameAndUser(String name, String userId);
 
     List<ProjectDto> findProjectsByUser(String id);
+
+    boolean isProjectOwnedByUser(String projectId, String userId);
 }

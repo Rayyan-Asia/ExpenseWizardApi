@@ -4,7 +4,6 @@ import Rayyan.Asia.ExpenseWizard.application.dto.models.project.ProjectDto;
 import Rayyan.Asia.ExpenseWizard.application.mappers.ProjectMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;
-import Rayyan.Asia.ExpenseWizard.domain.models.Project;
 import Rayyan.Asia.ExpenseWizard.domain.models.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,9 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper mapper;
 
     @Override
-    public Optional<Project> findById(String id) {
-        return projectRepository.findById(id);
+    public Optional<ProjectDto> findById(String id) {
+        var project = projectRepository.findById(id);
+        return project.map(mapper::domainToDto);
     }
 
     @Override

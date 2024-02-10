@@ -2,10 +2,11 @@ package Rayyan.Asia.ExpenseWizard.representation.controllers;
 
 import Rayyan.Asia.ExpenseWizard.application.dto.models.project.ProjectDto;
 import Rayyan.Asia.ExpenseWizard.application.dto.models.user.CustomUserDetails;
-import Rayyan.Asia.ExpenseWizard.application.mappers.ProjectMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,16 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final UserService userService;
-    private final ProjectMapper projectMapper;
 
     @GetMapping()
-    public ResponseEntity<ProjectDto> get(@RequestParam String projectId) {
-        var project = projectService.findById(projectId);
-        return project.map(value -> new ResponseEntity<>(projectMapper.domainToDto(value), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<ProjectDto> get(@RequestParam @NotNull @NotBlank String projectId) {
+        var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var userId = authentication.getUserId();
+        if (projectService.isProjectOwnedByUser(projectId, userId)) {
+            var project = projectService.findById(projectId);
+            return project.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping()
@@ -56,10 +61,11 @@ public class ProjectController {
         var authentication = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (project.getId() == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (!projectService.isProjectOwnedByUser(project.getId() ,authentication.getUserId()))
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (projectService.isProjectOwnedByUser(project.getId() ,authentication.getUserId())){
+            var projectDto = projectService.save(project, authentication.getUserId());
+            return new ResponseEntity<>(projectDto, HttpStatus.NO_CONTENT);
+        }
 
-        var projectDto = projectService.save(project, authentication.getUserId());
-        return new ResponseEntity<>(projectDto, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }

@@ -11,4 +11,6 @@ public interface ExpenseService {
     ExpenseDto save(ExpenseDto expense, String projectId);
 
     List<ExpenseDto> save(List<ExpenseDto> expenses, String projectId);
+    boolean areExpensesOwnedByProject(List<String> expenseIds, String projectId);
+    boolean isExpenseOwnedByProject(String expenseId, String projectId);
 }

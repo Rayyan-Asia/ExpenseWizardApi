@@ -1,7 +1,6 @@
 package Rayyan.Asia.ExpenseWizard.domain.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -27,7 +26,6 @@ public class Expense {
     private Project project;
 
     @NotNull
-    @NotEmpty
     private Float cost;
 
     private Timestamp timestamp = Timestamp.from(Instant.now());

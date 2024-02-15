@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -24,13 +25,17 @@ public class UserController {
         var user = userService.getById(authentication.getUserId());
         if (user.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        var existingUser = userService.getByEmail(userDto.getEmail());
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(user.get().getId()))
+            return new ResponseEntity<>("Email already used", HttpStatus.BAD_REQUEST);
+
         userDto.setId(user.get().getId());
         userService.save(userDto);
         return new ResponseEntity<>("User Updated Successfully", HttpStatus.NO_CONTENT);
     }
 
     @GetMapping()
-    public ResponseEntity<UserDto> get(){
+    public ResponseEntity<UserDto> get() {
         var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var user = userService.getById(authentication.getUserId());
         return user.map(userDto -> new ResponseEntity<>(userDto, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));

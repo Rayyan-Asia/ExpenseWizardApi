@@ -10,6 +10,8 @@ public interface ProjectService {
 
     ProjectDto save(ProjectDto project, String Id);
 
+    void delete(String projectId);
+
     Optional<ProjectDto> findProjectByNameAndUser(String name, String userId);
 
     List<ProjectDto> findProjectsByUser(String id);

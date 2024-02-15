@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 
@@ -28,16 +29,20 @@ public class ProjectController {
     public ResponseEntity<ProjectDto> get(@RequestParam @NotNull @NotBlank String projectId) {
         var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var userId = authentication.getUserId();
-        if (projectService.isProjectOwnedByUser(projectId, userId)) {
-            var project = projectService.findById(projectId);
-            return project.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            if (projectService.isProjectOwnedByUser(projectId, userId)) {
+                var project = projectService.findById(projectId);
+                return project.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            }
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping()
-    public ResponseEntity<ProjectDto> post(@RequestBody @Valid ProjectDto project){
-        var authentication = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<ProjectDto> post(@RequestBody @Valid ProjectDto project) {
+        var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var user = userService.getById(authentication.getUserId());
         if (user.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -50,22 +55,45 @@ public class ProjectController {
     }
 
     @GetMapping("byUser")
-    public ResponseEntity<List<ProjectDto>> getAllProjectsByUser(){
-        var authentication = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<List<ProjectDto>> getAllProjectsByUser() {
+        var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var projects = projectService.findProjectsByUser(authentication.getUserId());
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
     @PutMapping()
-    public ResponseEntity<ProjectDto> update(@RequestBody @Valid ProjectDto project){
-        var authentication = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (project.getId() == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (projectService.isProjectOwnedByUser(project.getId() ,authentication.getUserId())){
-            var projectDto = projectService.save(project, authentication.getUserId());
-            return new ResponseEntity<>(projectDto, HttpStatus.NO_CONTENT);
-        }
+    public ResponseEntity<ProjectDto> update(@RequestBody @Valid ProjectDto project) {
+        var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            if (project.getId() == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (projectService.isProjectOwnedByUser(project.getId(), authentication.getUserId())) {
+                var projectDto = projectService.save(project, authentication.getUserId());
+                return new ResponseEntity<>(projectDto, HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
+
+
+    @DeleteMapping("byId")
+    public ResponseEntity<Void> delete(@RequestParam @NotNull @NotBlank String projectId) {
+        try {
+            var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            var userId = authentication.getUserId();
+
+            if (projectService.isProjectOwnedByUser(projectId, userId)) {
+                projectService.delete(projectId);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

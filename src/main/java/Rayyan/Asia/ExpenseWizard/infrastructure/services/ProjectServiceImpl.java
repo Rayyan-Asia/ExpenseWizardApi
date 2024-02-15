@@ -8,6 +8,8 @@ import Rayyan.Asia.ExpenseWizard.domain.models.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,12 +21,14 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper mapper;
 
     @Override
+    @Transactional
     public Optional<ProjectDto> findById(String id) {
         var project = projectRepository.findById(id);
         return project.map(mapper::domainToDto);
     }
 
     @Override
+    @Transactional
     public ProjectDto save(ProjectDto project, String userId) {
         var projectModel = mapper.dtoToDomain(project);
         var user = new UserEntity();
@@ -35,19 +39,31 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
+    public void delete(String projectId) {
+        var project = projectRepository.findById(projectId);
+        project.ifPresent(projectRepository::delete);
+    }
+
+    @Override
+    @Transactional
     public Optional<ProjectDto> findProjectByNameAndUser(String name, String userId) {
         var project = projectRepository.findProjectByNameAndUser(name,userId);
         return project.map(mapper::domainToDto);
     }
 
     @Override
+    @Transactional
     public List<ProjectDto> findProjectsByUser(String id) {
        var projects = projectRepository.findProjectsByUserId(id);
        return mapper.domainToDto(projects);
     }
     @Override
+    @Transactional
     public boolean isProjectOwnedByUser(String projectId, String userId) {
         var project = projectRepository.findById(projectId);
+        if (project.isEmpty())
+            throw new NotFoundException("Project Not Found");
         return project.map(value -> value.getUser().getId().equals(userId)).orElse(false);
     }
 }

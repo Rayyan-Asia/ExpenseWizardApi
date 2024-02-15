@@ -1,0 +1,574 @@
+{
+	"info": {
+		"_postman_id": "fa5a4110-e03d-4320-8567-dcb9dda46ac0",
+		"name": "ExpenseWizard",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25622800"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "UserByEmail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Extract the token from the response string\r",
+									"const responseString = pm.response.text();\r",
+									"const accessToken = responseString.split(':')[1].trim();\r",
+									"\r",
+									"// Check if the accessToken exists\r",
+									"if (accessToken) {\r",
+									"    // Set the accessToken in the environment variable\r",
+									"    pm.collectionVariables.set('jwt', accessToken);\r",
+									"\r",
+									"    // Log the token for verification (optional)\r",
+									"    console.log('JWT Token Set:', accessToken);\r",
+									"} else {\r",
+									"    // Log a warning if the token is not found\r",
+									"    console.warn('Access token not found in response body');\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"RayyanTawfieg2@gmail.com\",\r\n    \"password\": \"rayyan1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Rayyan\",\r\n    \"email\": \"RayyanTawfieg3@gmail.com\",\r\n    \"password\": \"rayyan1234\",\r\n    \"birthDate\": \"2001-09-23T00:00:00.000Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/auth/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCurrentUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/user",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UserUpdate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Rayyan\",\r\n    \"email\": \"RayyanTawfieg5@gmail.com\",\r\n    \"password\": \"rayyan1234\",\r\n    \"birthDate\": \"2001-09-23T00:00:00.000Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/user/update",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Projects",
+			"item": [
+				{
+					"name": "getProject",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/projects?projectId=225daf6d-3d3d-4f64-a024-bf55a554b01b",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects"
+							],
+							"query": [
+								{
+									"key": "projectId",
+									"value": "225daf6d-3d3d-4f64-a024-bf55a554b01b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Test\",\r\n  \"limit\": 2000\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/projects",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetProjectsForCurrentUser",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/projects/byUser",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"byUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateProject",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"e2228cd7-1e99-4d4e-be6e-be869e715c56\",\r\n    \"name\": \"Test3\",\r\n    \"limit\": 200.0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/projects",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteProject",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/projects?projectId=225daf6d-3d3d-4f64-a024-bf55a554b01b",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects"
+							],
+							"query": [
+								{
+									"key": "projectId",
+									"value": "225daf6d-3d3d-4f64-a024-bf55a554b01b"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Expenses",
+			"item": [
+				{
+					"name": "getById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/expenses/byId?expenseId=a58540ab-174a-4cdf-9ecb-6bb50aff70d0&projectId=225daf6d-3d3d-4f64-a024-bf55a554b01b",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"expenses",
+								"byId"
+							],
+							"query": [
+								{
+									"key": "expenseId",
+									"value": "a58540ab-174a-4cdf-9ecb-6bb50aff70d0"
+								},
+								{
+									"key": "projectId",
+									"value": "225daf6d-3d3d-4f64-a024-bf55a554b01b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getByProjectId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/expenses/byId?expenseId=a58540ab-174a-4cdf-9ecb-6bb50aff70d0&projectId=225daf6d-3d3d-4f64-a024-bf55a554b01b",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"expenses",
+								"byId"
+							],
+							"query": [
+								{
+									"key": "expenseId",
+									"value": "a58540ab-174a-4cdf-9ecb-6bb50aff70d0"
+								},
+								{
+									"key": "projectId",
+									"value": "225daf6d-3d3d-4f64-a024-bf55a554b01b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulk",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"projectId\": \"225daf6d-3d3d-4f64-a024-bf55a554b01b\",\r\n  \"expense\": [\r\n    {\r\n      \"id\":\"a58540ab-174a-4cdf-9ecb-6bb50aff70d0\",\r\n      \"cost\": 100.0,\r\n      \"expenseCategory\": 0\r\n    }\r\n    ,{\r\n      \"cost\": 150.0,\r\n      \"expenseCategory\": 1\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/expenses/bulk",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"expenses",
+								"bulk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upsert",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"ca6bec09-47ac-4ad7-b572-cf06d28361f3\",\r\n    \"cost\": 100.0,\r\n    \"timestamp\": \"2024-02-10T06:42:51.711+00:00\",\r\n    \"expenseCategory\": \"Transportation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/expenses?projectId=225daf6d-3d3d-4f64-a024-bf55a554b01b",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"expenses"
+							],
+							"query": [
+								{
+									"key": "projectId",
+									"value": "225daf6d-3d3d-4f64-a024-bf55a554b01b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/expenses?expenseId=a58540ab-174a-4cdf-9ecb-6bb50aff70d0&projectId=225daf6d-3d3d-4f64-a024-bf55a554b01b",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"expenses"
+							],
+							"query": [
+								{
+									"key": "expenseId",
+									"value": "a58540ab-174a-4cdf-9ecb-6bb50aff70d0"
+								},
+								{
+									"key": "projectId",
+									"value": "225daf6d-3d3d-4f64-a024-bf55a554b01b"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "jwt",
+			"value": ""
+		}
+	]
+}

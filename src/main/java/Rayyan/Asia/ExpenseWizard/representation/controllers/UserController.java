@@ -1,8 +1,11 @@
 package Rayyan.Asia.ExpenseWizard.representation.controllers;
 
 import Rayyan.Asia.ExpenseWizard.application.dto.models.user.CustomUserDetails;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.user.SyncDto;
 import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserDto;
 import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserUpsertDto;
+import Rayyan.Asia.ExpenseWizard.domain.interfaces.ExpenseService;
+import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
     private final UserService userService;
+    private final ProjectService projectService;
+    private final ExpenseService expenseService;
 
     @PutMapping("update")
     public ResponseEntity<String> register(@Valid @RequestBody UserUpsertDto userDto) {
@@ -39,5 +44,21 @@ public class UserController {
         var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var user = userService.getById(authentication.getUserId());
         return user.map(userDto -> new ResponseEntity<>(userDto, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+
+    @GetMapping("sync")
+    public ResponseEntity<SyncDto> sync() {
+        var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var user = userService.getById(authentication.getUserId());
+        if(user.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        var projects = projectService.findProjectsByUser(authentication.getUserId());
+        var expenses = expenseService.findByUserId(authentication.getUserId());
+        var sync = new SyncDto();
+        sync.setUser(user.get());
+        sync.setProjects(projects);
+        sync.setExpense(expenses);
+        return new ResponseEntity<>(sync, HttpStatus.OK);
     }
 }

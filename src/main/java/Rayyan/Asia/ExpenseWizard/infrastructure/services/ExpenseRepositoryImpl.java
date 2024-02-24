@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -39,5 +40,17 @@ public class ExpenseRepositoryImpl implements ExpenseRepository {
         entityManager.createQuery("DELETE FROM Expense e WHERE e.id = :id")
                 .setParameter("id", expense.getId())
                 .executeUpdate();
+    }
+
+    @Override
+    public List<Expense> findByUserId(String userId) {
+        return entityManager.createQuery(
+                        "SELECT e " +
+                                "FROM Expense e " +
+                                "JOIN e.project p " +
+                                "JOIN p.user u " +
+                                "WHERE u.id = :userId", Expense.class)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 }

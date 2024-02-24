@@ -9,6 +9,7 @@ public interface ExpenseService {
     Optional<ExpenseDto> findById(String id);
 
     List<ExpenseDto> findByProjectId(String projectId);
+    List<ExpenseDto> findByUserId(String userId);
 
     ExpenseDto save(ExpenseDto expense, String projectId);
 

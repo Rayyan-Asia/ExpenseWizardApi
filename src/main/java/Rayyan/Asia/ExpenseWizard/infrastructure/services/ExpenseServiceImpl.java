@@ -43,6 +43,12 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
+    public List<ExpenseDto> findByUserId(String userId) {
+        var expenses = expenseRepository.findByUserId(userId);
+        return mapper.domainToDto(expenses);
+    }
+
+    @Override
     @Transactional
     public ExpenseDto save(ExpenseDto expense, String id) {
         var expenseModel = mapper.dtoToDomain(expense);

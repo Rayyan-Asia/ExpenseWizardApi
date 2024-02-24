@@ -27,7 +27,10 @@ public class ExpenseRepositoryImpl implements ExpenseRepository {
 
     @Override
     public Expense save(Expense expense) {
-        entityManager.persist(expense);
+        if (expense.getId() != null)
+            entityManager.merge(expense);
+        else
+            entityManager.persist(expense);
         return expense;
     }
 

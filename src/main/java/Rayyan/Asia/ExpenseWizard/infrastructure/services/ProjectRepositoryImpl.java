@@ -30,7 +30,10 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
     @Override
     public Project save(Project project) {
-        entityManager.persist(project);
+        if (project.getId() != null)
+            entityManager.merge(project);
+        else
+            entityManager.persist(project);
         return project;
     }
 

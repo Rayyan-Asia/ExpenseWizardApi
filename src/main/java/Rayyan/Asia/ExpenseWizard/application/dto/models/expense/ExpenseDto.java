@@ -19,4 +19,5 @@ public class ExpenseDto {
 
     @NotNull
     private ExpenseCategory expenseCategory;
+    private String description;
 }

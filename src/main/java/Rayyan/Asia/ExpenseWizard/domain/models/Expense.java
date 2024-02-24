@@ -33,4 +33,5 @@ public class Expense {
     @NotNull
     @Column(name = "category")
     private ExpenseCategory expenseCategory;
+    private String description;
 }

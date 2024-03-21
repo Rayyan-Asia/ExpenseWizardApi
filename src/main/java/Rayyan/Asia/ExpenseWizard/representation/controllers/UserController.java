@@ -1,9 +1,6 @@
 package Rayyan.Asia.ExpenseWizard.representation.controllers;
 
-import Rayyan.Asia.ExpenseWizard.application.dto.models.user.CustomUserDetails;
-import Rayyan.Asia.ExpenseWizard.application.dto.models.user.SyncDto;
-import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserDto;
-import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserUpsertDto;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.user.*;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ExpenseService;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
@@ -25,18 +22,18 @@ public class UserController {
     private final ExpenseService expenseService;
 
     @PutMapping("update")
-    public ResponseEntity<String> register(@Valid @RequestBody UserUpsertDto userDto) {
+    public ResponseEntity<UserContactDto> register(@Valid @RequestBody UserUpsertDto userDto) {
         var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var user = userService.getById(authentication.getUserId());
         if (user.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         var existingUser = userService.getByEmail(userDto.getEmail());
         if (existingUser.isPresent() && !existingUser.get().getId().equals(user.get().getId()))
-            return new ResponseEntity<>("Email already used", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new UserContactDto("Email already used"), HttpStatus.BAD_REQUEST);
 
         userDto.setId(user.get().getId());
         userService.save(userDto);
-        return new ResponseEntity<>("User Updated Successfully", HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new UserContactDto("User Updated Successfully"), HttpStatus.NO_CONTENT);
     }
 
     @GetMapping()

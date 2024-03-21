@@ -1,5 +1,6 @@
 package Rayyan.Asia.ExpenseWizard.representation.controllers;
 
+import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserContactDto;
 import Rayyan.Asia.ExpenseWizard.application.dto.models.user.UserUpsertDto;
 import Rayyan.Asia.ExpenseWizard.application.messages.auth.LoginDto;
 import Rayyan.Asia.ExpenseWizard.application.dto.models.user.CustomUserDetails;
@@ -23,21 +24,21 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<UserContactDto> login(@Valid @RequestBody LoginDto loginDto) {
         var userFound = userService.getByEmail(loginDto.getEmail());
         if (userFound.isPresent()) {
             var customUserDetails = new CustomUserDetails(userFound.get().getId(), loginDto.getPassword());
-            return new ResponseEntity<>("Authentication Successful: " + JwtUtil.generateToken(customUserDetails), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(new UserContactDto("Authentication Successful: " + JwtUtil.generateToken(customUserDetails)), HttpStatus.ACCEPTED);
         } else {
-            return new ResponseEntity<>("User not Found or Access Denied, Incorrect Credentials", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new UserContactDto("User not Found or Access Denied, Incorrect Credentials"), HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PostMapping("register")
-    public ResponseEntity<String> register(@Valid @RequestBody UserUpsertDto registerDto) {
+    public ResponseEntity<UserContactDto> register(@Valid @RequestBody UserUpsertDto registerDto) {
         if (userService.getByEmail(registerDto.getEmail()).isPresent())
-            return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new UserContactDto("Username is taken"), HttpStatus.BAD_REQUEST);
         userService.save(registerDto);
-        return new ResponseEntity<>("User Registration Success", HttpStatus.OK);
+        return new ResponseEntity<>(new UserContactDto("User Registration Success"), HttpStatus.OK);
     }
 }

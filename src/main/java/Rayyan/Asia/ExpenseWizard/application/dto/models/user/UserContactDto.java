@@ -7,4 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class UserContactDto {
     private String message;
+
+    private UserDto user;
 }

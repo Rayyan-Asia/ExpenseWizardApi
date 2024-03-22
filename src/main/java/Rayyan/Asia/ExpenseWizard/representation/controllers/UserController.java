@@ -29,11 +29,11 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         var existingUser = userService.getByEmail(userDto.getEmail());
         if (existingUser.isPresent() && !existingUser.get().getId().equals(user.get().getId()))
-            return new ResponseEntity<>(new UserContactDto("Email already used"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new UserContactDto("Email already used",null), HttpStatus.BAD_REQUEST);
 
         userDto.setId(user.get().getId());
-        userService.save(userDto);
-        return new ResponseEntity<>(new UserContactDto("User Updated Successfully"), HttpStatus.NO_CONTENT);
+        var saved = userService.save(userDto);
+        return new ResponseEntity<>(new UserContactDto("User Updated Successfully",saved), HttpStatus.NO_CONTENT);
     }
 
     @GetMapping()

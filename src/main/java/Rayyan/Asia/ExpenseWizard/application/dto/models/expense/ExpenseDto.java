@@ -12,6 +12,8 @@ public class ExpenseDto {
 
     private String id;
 
+    private String projectId;
+
     @NotNull
     private Float cost;
 

@@ -28,17 +28,19 @@ public class AuthController {
         var userFound = userService.getByEmail(loginDto.getEmail());
         if (userFound.isPresent()) {
             var customUserDetails = new CustomUserDetails(userFound.get().getId(), loginDto.getPassword());
-            return new ResponseEntity<>(new UserContactDto("Authentication Successful: " + JwtUtil.generateToken(customUserDetails)), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(new UserContactDto("Authentication Successful: " + JwtUtil.generateToken(customUserDetails), userFound.get()), HttpStatus.ACCEPTED);
         } else {
-            return new ResponseEntity<>(new UserContactDto("User not Found or Access Denied, Incorrect Credentials"), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new UserContactDto("User not Found or Access Denied, Incorrect Credentials", null), HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PostMapping("register")
     public ResponseEntity<UserContactDto> register(@Valid @RequestBody UserUpsertDto registerDto) {
-        if (userService.getByEmail(registerDto.getEmail()).isPresent())
-            return new ResponseEntity<>(new UserContactDto("Username is taken"), HttpStatus.BAD_REQUEST);
-        userService.save(registerDto);
-        return new ResponseEntity<>(new UserContactDto("User Registration Success"), HttpStatus.OK);
+        var userFound = userService.getByEmail(registerDto.getEmail());
+        if (userFound.isPresent())
+            return new ResponseEntity<>(new UserContactDto("Username is taken", null), HttpStatus.BAD_REQUEST);
+        var user = userService.save(registerDto);
+        var customUserDetails = new CustomUserDetails(user.getId(), registerDto.getPassword());
+        return new ResponseEntity<>(new UserContactDto("Authentication Successful: " + JwtUtil.generateToken(customUserDetails), user), HttpStatus.ACCEPTED);
     }
 }

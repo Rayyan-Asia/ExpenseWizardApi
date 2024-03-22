@@ -11,10 +11,10 @@ public interface ExpenseService {
     List<ExpenseDto> findByProjectId(String projectId);
     List<ExpenseDto> findByUserId(String userId);
 
-    ExpenseDto save(ExpenseDto expense, String projectId);
+    ExpenseDto save(ExpenseDto expense);
 
-    List<ExpenseDto> save(List<ExpenseDto> expenses, String projectId);
+    List<ExpenseDto> save(List<ExpenseDto> expenses);
     void delete(String expenseId);
-    boolean areExpensesOwnedByProject(List<String> expenseIds, String projectId);
-    boolean isExpenseOwnedByProject(String expenseId, String projectId);
+    boolean areExpensesOwnedByUser(List<String> expenseIds, String userId);
+    boolean isExpenseOwnedByUser(String expenseId, String userId);
 }

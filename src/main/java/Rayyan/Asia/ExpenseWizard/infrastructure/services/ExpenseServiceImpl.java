@@ -5,7 +5,6 @@ import Rayyan.Asia.ExpenseWizard.application.mappers.ExpenseMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ExpenseRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ExpenseService;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectRepository;
-import Rayyan.Asia.ExpenseWizard.domain.models.Expense;
 import Rayyan.Asia.ExpenseWizard.domain.models.Project;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,10 +49,10 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     @Transactional
-    public ExpenseDto save(ExpenseDto expense, String id) {
+    public ExpenseDto save(ExpenseDto expense) {
         var expenseModel = mapper.dtoToDomain(expense);
         var project = new Project();
-        project.setId(id);
+        project.setId(expense.getProjectId());
         expenseModel.setProject(project);
         expenseRepository.save(expenseModel);
         return mapper.domainToDto(expenseModel);
@@ -61,15 +60,13 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     @Transactional
-    public List<ExpenseDto> save(List<ExpenseDto> expenses, String projectId) {
-        var expensesDomain = mapper.dtoToDomain(expenses);
-        for (Expense expense : expensesDomain) {
-            var project = new Project();
-            project.setId(projectId);
-            expense.setProject(project);
-            expenseRepository.save(expense);
+    public List<ExpenseDto> save(List<ExpenseDto> expenses) {
+        var dtos = new  ArrayList<ExpenseDto>();
+        for (ExpenseDto expense : expenses) {
+            var dto = save(expense);
+            dtos.add(dto);
         }
-        return mapper.domainToDto(expensesDomain);
+        return dtos;
     }
 
     @Override
@@ -81,27 +78,13 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     @Transactional
-    public boolean areExpensesOwnedByProject(List<String> expenseIds, String projectId) {
-        var project = projectRepository.findById(projectId);
-
-        for (String expenseId : expenseIds) {
-            if (project.isPresent() && project.get().getExpenses() != null) {
-                var bool = project.get().getExpenses().stream()
-                        .anyMatch(expense -> expense.getId().equals(expenseId));
-                if (!bool)
-                    return false;
-            } else
-                return false;
-        }
-        return true;
+    public boolean areExpensesOwnedByUser(List<String> expenseIds, String userId) {
+         return expenseRepository.areExpensesOwnedByUser(expenseIds, userId);
     }
 
     @Override
     @Transactional
-    public boolean isExpenseOwnedByProject(String expenseId, String projectId) {
-        var expense = expenseRepository.findById(expenseId);
-        if(expense.isEmpty())
-            throw new NotFoundException("Expense Not Found");
-        return expense.get().getProject().getId().equals(projectId);
+    public boolean isExpenseOwnedByUser(String expenseId, String userId) {
+        return expenseRepository.isExpenseOwnedByUser(expenseId, userId);
     }
 }

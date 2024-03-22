@@ -11,4 +11,6 @@ public interface ExpenseRepository {
     Expense save(Expense expense);
     void delete(Expense expense);
     List<Expense> findByUserId(String userId);
+    boolean isExpenseOwnedByUser(String expenseId, String userId);
+    boolean areExpensesOwnedByUser(List<String> expenseIds, String userId);
 }

@@ -53,4 +53,40 @@ public class ExpenseRepositoryImpl implements ExpenseRepository {
                 .setParameter("userId", userId)
                 .getResultList();
     }
+
+    public boolean isExpenseOwnedByUser(String expenseId, String userId) {
+        String queryString = "SELECT COUNT(e) " +
+                "FROM Expense e " +
+                "JOIN e.project p " +
+                "JOIN p.user u " +
+                "WHERE u.id = :userId AND e.id = :expenseId";
+
+        Long count = entityManager.createQuery(queryString, Long.class)
+                .setParameter("userId", userId)
+                .setParameter("expenseId", expenseId)
+                .getSingleResult();
+
+        return count == 1;
+    }
+
+
+    public boolean areExpensesOwnedByUser(List<String> expenseIds, String userId) {
+        if (expenseIds.isEmpty()) {
+            return false;
+        }
+
+        String queryString = "SELECT COUNT(e) " +
+                "FROM Expense e " +
+                "JOIN e.project p " +
+                "JOIN p.user u " +
+                "WHERE u.id = :userId AND e.id IN :expenseIds";
+
+        Long count = entityManager.createQuery(queryString, Long.class)
+                .setParameter("userId", userId)
+                .setParameter("expenseIds", expenseIds)
+                .getSingleResult();
+
+        return count == expenseIds.size();
+    }
+
 }

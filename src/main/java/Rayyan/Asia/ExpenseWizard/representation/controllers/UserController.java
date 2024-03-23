@@ -33,7 +33,7 @@ public class UserController {
 
         userDto.setId(user.get().getId());
         var saved = userService.save(userDto);
-        return new ResponseEntity<>(new UserContactDto("User Updated Successfully",saved), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new UserContactDto("User Updated Successfully",saved), HttpStatus.OK);
     }
 
     @GetMapping()

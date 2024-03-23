@@ -69,7 +69,7 @@ public class ProjectController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             if (projectService.isProjectOwnedByUser(project.getId(), authentication.getUserId())) {
                 var projectDto = projectService.save(project, authentication.getUserId());
-                return new ResponseEntity<>(projectDto, HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(projectDto, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 

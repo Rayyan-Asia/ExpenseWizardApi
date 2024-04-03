@@ -11,4 +11,6 @@ public interface ProjectRepository {
     void delete(Project project);
     Optional<Project> findProjectByNameAndUser(String name, String userId);
     List<Project> findProjectsByUserId(String userId);
+
+    List<Project> findProjectsWithCurrentMonthExpenses(String userId);
 }

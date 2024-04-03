@@ -1,6 +1,7 @@
 package Rayyan.Asia.ExpenseWizard.representation.controllers;
 
 import Rayyan.Asia.ExpenseWizard.application.dto.models.project.ProjectDto;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.project.ProjectListDto;
 import Rayyan.Asia.ExpenseWizard.application.dto.models.user.CustomUserDetails;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.UserService;
@@ -58,6 +59,13 @@ public class ProjectController {
     public ResponseEntity<List<ProjectDto>> getAllProjectsByUser() {
         var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var projects = projectService.findProjectsByUser(authentication.getUserId());
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
+
+    @GetMapping("byUserWithExpensesTotal")
+    public ResponseEntity<List<ProjectListDto>> getAllProjectsWithExpensesByUser() {
+        var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var projects = projectService.getProjectsWithCurrentMonthExpenses(authentication.getUserId());
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 

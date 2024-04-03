@@ -1,9 +1,12 @@
 package Rayyan.Asia.ExpenseWizard.infrastructure.services;
 
 import Rayyan.Asia.ExpenseWizard.application.dto.models.project.ProjectDto;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.project.ProjectListDto;
 import Rayyan.Asia.ExpenseWizard.application.mappers.ProjectMapper;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectRepository;
 import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectService;
+import Rayyan.Asia.ExpenseWizard.domain.models.Expense;
+import Rayyan.Asia.ExpenseWizard.domain.models.Project;
 import Rayyan.Asia.ExpenseWizard.domain.models.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,5 +69,20 @@ public class ProjectServiceImpl implements ProjectService {
         if (project.isEmpty())
             throw new NotFoundException("Project Not Found");
         return project.map(value -> value.getUser().getId().equals(userId)).orElse(false);
+    }
+
+    @Override
+    public List<ProjectListDto> getProjectsWithCurrentMonthExpenses(String userId) {
+        var list = new ArrayList<ProjectListDto>();
+        var projects = projectRepository.findProjectsWithCurrentMonthExpenses(userId);
+        for (Project project : projects){
+            double totalExpensesThisMonth = project.getExpenses().stream()
+                    .mapToDouble(Expense::getCost)
+                    .sum();
+            var projectList = mapper.domainToListDto(project);
+            projectList.setExpensesThisMonth((float) totalExpensesThisMonth);
+            list.add(projectList);
+        }
+        return list;
     }
 }

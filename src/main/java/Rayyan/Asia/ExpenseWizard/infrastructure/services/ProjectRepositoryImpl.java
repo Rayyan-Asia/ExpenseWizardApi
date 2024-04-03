@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +61,22 @@ public class ProjectRepositoryImpl implements ProjectRepository {
     public List<Project> findProjectsByUserId(String userId) {
         return entityManager.createQuery("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.expenses WHERE p.user.id = :id", Project.class)
                 .setParameter("id", userId)
+                .getResultList();
+    }
+
+    @Override
+    public List<Project> findProjectsWithCurrentMonthExpenses(String userId) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Timestamp startOfMonth = new Timestamp(calendar.getTimeInMillis());
+
+        return entityManager.createQuery("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.expenses e WHERE p.user.id = :id AND e.timestamp >= :startOfMonth", Project.class)
+                .setParameter("id", userId)
+                .setParameter("startOfMonth", startOfMonth)
                 .getResultList();
     }
 }

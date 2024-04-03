@@ -1,6 +1,7 @@
 package Rayyan.Asia.ExpenseWizard.domain.interfaces;
 
 import Rayyan.Asia.ExpenseWizard.application.dto.models.project.ProjectDto;
+import Rayyan.Asia.ExpenseWizard.application.dto.models.project.ProjectListDto;
 import Rayyan.Asia.ExpenseWizard.domain.models.Project;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface ProjectService {
     List<ProjectDto> findProjectsByUser(String id);
 
     boolean isProjectOwnedByUser(String projectId, String userId);
+
+    List<ProjectListDto> getProjectsWithCurrentMonthExpenses(String userId);
 }

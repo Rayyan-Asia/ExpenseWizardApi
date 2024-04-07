@@ -4,8 +4,12 @@ import Rayyan.Asia.ExpenseWizard.domain.interfaces.ExpenseRepository;
 import Rayyan.Asia.ExpenseWizard.domain.models.Expense;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,15 +47,49 @@ public class ExpenseRepositoryImpl implements ExpenseRepository {
     }
 
     @Override
-    public List<Expense> findByUserId(String userId) {
-        return entityManager.createQuery(
+    public Page<Expense> findByUserId(String userId, Pageable pageable) {
+        TypedQuery<Expense> query = entityManager.createQuery(
                         "SELECT e " +
                                 "FROM Expense e " +
                                 "JOIN e.project p " +
                                 "JOIN p.user u " +
                                 "WHERE u.id = :userId", Expense.class)
                 .setParameter("userId", userId)
-                .getResultList();
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
+
+        TypedQuery<Long> countQuery = entityManager.createQuery(
+                        "SELECT COUNT(e) " +
+                                "FROM Expense e " +
+                                "JOIN e.project p " +
+                                "JOIN p.user u " +
+                                "WHERE u.id = :userId", Long.class)
+                .setParameter("userId", userId);
+
+        long totalCount = countQuery.getSingleResult();
+        return new PageImpl<>(query.getResultList(), pageable, totalCount);
+    }
+
+    @Override
+    public Page<Expense> findByProjectId(String projectId, Pageable pageable) {
+        TypedQuery<Expense> query = entityManager.createQuery(
+                        "SELECT e " +
+                                "FROM Expense e " +
+                                "JOIN e.project p " +
+                                "WHERE p.id = :projectId", Expense.class)
+                .setParameter("projectId", projectId)
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
+
+        TypedQuery<Long> countQuery = entityManager.createQuery(
+                        "SELECT COUNT(e) " +
+                                "FROM Expense e " +
+                                "JOIN e.project p " +
+                                "WHERE p.id = :projectId", Long.class)
+                .setParameter("projectId", projectId);
+
+        long totalCount = countQuery.getSingleResult();
+        return new PageImpl<>(query.getResultList(), pageable, totalCount);
     }
 
     public boolean isExpenseOwnedByUser(String expenseId, String userId) {

@@ -8,9 +8,10 @@ import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectRepository;
 import Rayyan.Asia.ExpenseWizard.domain.models.Project;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,6 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     private final ExpenseMapper mapper;
     private final ExpenseRepository expenseRepository;
-    private final ProjectRepository projectRepository;
 
     @Override
     @Transactional
@@ -33,18 +33,13 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     @Transactional
-    public List<ExpenseDto> findByProjectId(String projectId) {
-        var project = projectRepository.findById(projectId);
-        if (project.isPresent())
-            return mapper.domainToDto(project.get().getExpenses());
-        else
-            return new ArrayList<>();
+    public Page<ExpenseDto> findByProjectId(String projectId, Pageable pageable) {
+        return expenseRepository.findByProjectId(projectId, pageable).map(mapper::domainToDto);
     }
 
     @Override
-    public List<ExpenseDto> findByUserId(String userId) {
-        var expenses = expenseRepository.findByUserId(userId);
-        return mapper.domainToDto(expenses);
+    public Page<ExpenseDto> findByUserId(String userId, Pageable pageable) {
+        return expenseRepository.findByUserId(userId, pageable).map(mapper::domainToDto);
     }
 
     @Override

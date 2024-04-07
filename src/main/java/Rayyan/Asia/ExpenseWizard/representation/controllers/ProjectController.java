@@ -10,13 +10,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects")
@@ -56,17 +57,16 @@ public class ProjectController {
     }
 
     @GetMapping("byUser")
-    public ResponseEntity<List<ProjectDto>> getAllProjectsByUser() {
+    public ResponseEntity<Page<ProjectDto>> getAllProjectsByUser(Pageable pageable) {
         var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        var projects = projectService.findProjectsByUser(authentication.getUserId());
-        return new ResponseEntity<>(projects, HttpStatus.OK);
+        return ResponseEntity.ok(projectService.findProjectsByUser(authentication.getUserId(), pageable));
     }
 
     @GetMapping("byUserWithExpensesTotal")
-    public ResponseEntity<List<ProjectListDto>> getAllProjectsWithExpensesByUser() {
+    public ResponseEntity<Page<ProjectListDto>> getAllProjectsWithExpensesByUser(Pageable pageable) {
         var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        var projects = projectService.getProjectsWithCurrentMonthExpenses(authentication.getUserId());
-        return new ResponseEntity<>(projects, HttpStatus.OK);
+        var projects = projectService.getProjectsWithCurrentMonthExpenses(authentication.getUserId(), pageable);
+        return ResponseEntity.ok(projects);
     }
 
     @PutMapping()
@@ -77,7 +77,7 @@ public class ProjectController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             if (projectService.isProjectOwnedByUser(project.getId(), authentication.getUserId())) {
                 var projectDto = projectService.save(project, authentication.getUserId());
-                return new ResponseEntity<>(projectDto, HttpStatus.OK);
+                return ResponseEntity.ok(projectDto);
             }
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
@@ -88,7 +88,7 @@ public class ProjectController {
 
 
     @DeleteMapping("byId")
-    public ResponseEntity<Void> delete(@RequestParam @NotNull @NotBlank String projectId) {
+    public ResponseEntity<?> delete(@RequestParam @NotNull @NotBlank String projectId) {
         try {
             var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             var userId = authentication.getUserId();

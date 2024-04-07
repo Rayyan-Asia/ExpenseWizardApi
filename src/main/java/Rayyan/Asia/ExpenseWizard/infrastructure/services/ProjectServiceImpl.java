@@ -10,6 +10,9 @@ import Rayyan.Asia.ExpenseWizard.domain.models.Project;
 import Rayyan.Asia.ExpenseWizard.domain.models.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -58,9 +61,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public List<ProjectDto> findProjectsByUser(String id) {
-       var projects = projectRepository.findProjectsByUserId(id);
-       return mapper.domainToDto(projects);
+    public Page<ProjectDto> findProjectsByUser(String id, Pageable pageable) {
+       return projectRepository.findProjectsByUserId(id, pageable).map(mapper::domainToDto);
     }
     @Override
     @Transactional
@@ -72,10 +74,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectListDto> getProjectsWithCurrentMonthExpenses(String userId) {
+    public Page<ProjectListDto> getProjectsWithCurrentMonthExpenses(String userId, Pageable pageable) {
         var list = new ArrayList<ProjectListDto>();
-        var projects = projectRepository.findProjectsWithCurrentMonthExpenses(userId);
-        for (Project project : projects){
+        var projects = projectRepository.findProjectsWithCurrentMonthExpenses(userId, pageable);
+        for (Project project : projects.getContent()){
             double totalExpensesThisMonth = project.getExpenses().stream()
                     .mapToDouble(Expense::getCost)
                     .sum();
@@ -83,6 +85,7 @@ public class ProjectServiceImpl implements ProjectService {
             projectList.setExpensesThisMonth((float) totalExpensesThisMonth);
             list.add(projectList);
         }
-        return list;
+
+        return new PageImpl<>(list,pageable,projects.getTotalElements());
     }
 }

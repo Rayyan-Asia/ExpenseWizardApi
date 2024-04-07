@@ -4,8 +4,12 @@ import Rayyan.Asia.ExpenseWizard.domain.interfaces.ProjectRepository;
 import Rayyan.Asia.ExpenseWizard.domain.models.Project;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,14 +62,28 @@ public class ProjectRepositoryImpl implements ProjectRepository {
     }
 
     @Override
-    public List<Project> findProjectsByUserId(String userId) {
-        return entityManager.createQuery("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.expenses WHERE p.user.id = :id", Project.class)
+    public Page<Project> findProjectsByUserId(String userId, Pageable pageable) {
+        TypedQuery<Project> query = entityManager.createQuery(
+                        "SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.expenses WHERE p.user.id = :id", Project.class)
+                .setParameter("id", userId);
+
+        // Set pagination parameters
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+
+        List<Project> resultList = query.getResultList();
+
+        // Count total number of results without pagination
+        long totalCount = entityManager.createQuery(
+                        "SELECT COUNT(DISTINCT p) FROM Project p WHERE p.user.id = :id", Long.class)
                 .setParameter("id", userId)
-                .getResultList();
+                .getSingleResult();
+
+        return new PageImpl<>(resultList, pageable, totalCount);
     }
 
     @Override
-    public List<Project> findProjectsWithCurrentMonthExpenses(String userId) {
+    public Page<Project> findProjectsWithCurrentMonthExpenses(String userId, Pageable pageable) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -74,9 +92,24 @@ public class ProjectRepositoryImpl implements ProjectRepository {
         calendar.set(Calendar.MILLISECOND, 0);
         Timestamp startOfMonth = new Timestamp(calendar.getTimeInMillis());
 
-        return entityManager.createQuery("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.expenses e WHERE p.user.id = :id AND e.timestamp >= :startOfMonth", Project.class)
+        TypedQuery<Project> query = entityManager.createQuery(
+                        "SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.expenses e WHERE p.user.id = :id AND e.timestamp >= :startOfMonth", Project.class)
+                .setParameter("id", userId)
+                .setParameter("startOfMonth", startOfMonth);
+
+        // Set pagination parameters
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+
+        List<Project> resultList = query.getResultList();
+
+        // Count total number of results without pagination
+        long totalCount = entityManager.createQuery(
+                        "SELECT COUNT(DISTINCT p) FROM Project p LEFT JOIN p.expenses e WHERE p.user.id = :id AND e.timestamp >= :startOfMonth", Long.class)
                 .setParameter("id", userId)
                 .setParameter("startOfMonth", startOfMonth)
-                .getResultList();
+                .getSingleResult();
+
+        return new PageImpl<>(resultList, pageable, totalCount);
     }
 }

@@ -42,20 +42,4 @@ public class UserController {
         var user = userService.getById(authentication.getUserId());
         return user.map(userDto -> new ResponseEntity<>(userDto, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
-
-    @GetMapping("sync")
-    public ResponseEntity<SyncDto> sync() {
-        var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        var user = userService.getById(authentication.getUserId());
-        if(user.isEmpty())
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        var projects = projectService.findProjectsByUser(authentication.getUserId());
-        var expenses = expenseService.findByUserId(authentication.getUserId());
-        var sync = new SyncDto();
-        sync.setUser(user.get());
-        sync.setProjects(projects);
-        sync.setExpense(expenses);
-        return new ResponseEntity<>(sync, HttpStatus.OK);
-    }
 }

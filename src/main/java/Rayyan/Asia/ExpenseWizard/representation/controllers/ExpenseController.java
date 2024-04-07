@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,12 +43,12 @@ public class ExpenseController {
     }
 
     @GetMapping("bulk")
-    public ResponseEntity<List<ExpenseDto>> getProject(@RequestParam @NotNull String projectId) {
+    public ResponseEntity<Page<ExpenseDto>> getProject(@RequestParam @NotNull String projectId, Pageable pageable) {
         var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var userId = authentication.getUserId();
         try {
             if (projectService.isProjectOwnedByUser(projectId, userId)) {
-                var expenses = expenseService.findByProjectId(projectId);
+                var expenses = expenseService.findByProjectId(projectId, pageable);
                 return new ResponseEntity<>(expenses, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -87,7 +89,7 @@ public class ExpenseController {
     }
 
     @DeleteMapping()
-    public ResponseEntity delete(@RequestParam @NotNull String expenseId) {
+    public ResponseEntity<?> delete(@RequestParam @NotNull String expenseId) {
         var authentication = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var userId = authentication.getUserId();
         try {

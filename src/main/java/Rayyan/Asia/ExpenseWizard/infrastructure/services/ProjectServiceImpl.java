@@ -46,6 +46,15 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public void save(List<ProjectDto> projects, String Id) {
+        var domainProjects = mapper.dtoToDomain(projects);
+        domainProjects.forEach(domainProject -> {
+            domainProject.setId(Id);
+            projectRepository.save(domainProject);
+        });
+    }
+
+    @Override
     @Transactional
     public void delete(String projectId) {
         var project = projectRepository.findById(projectId);

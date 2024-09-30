@@ -68,8 +68,10 @@ public class ProjectRepositoryImpl implements ProjectRepository {
                 .setParameter("id", userId);
 
         // Set pagination parameters
-        query.setFirstResult((int) pageable.getOffset());
-        query.setMaxResults(pageable.getPageSize());
+        if (pageable.isPaged()){
+            query.setFirstResult((int) pageable.getOffset());
+            query.setMaxResults(pageable.getPageSize());
+        }
 
         List<Project> resultList = query.getResultList();
 

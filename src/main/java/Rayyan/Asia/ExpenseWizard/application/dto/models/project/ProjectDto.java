@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 
 @Data
 public class ProjectDto {
@@ -13,4 +15,5 @@ public class ProjectDto {
     @NotBlank
     private String name;
     private Float limit;
+    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 }

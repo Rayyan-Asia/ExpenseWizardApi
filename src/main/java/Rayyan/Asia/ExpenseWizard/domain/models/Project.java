@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,4 +39,7 @@ public class Project {
 
     @OneToMany(mappedBy = "project" ,cascade = CascadeType.ALL, orphanRemoval=true)
     private List<Expense> expenses = new ArrayList<>();
+
+    @Column(name = "created_at")
+    private Timestamp createdAt = Timestamp.from(Instant.now());
 }

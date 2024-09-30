@@ -54,9 +54,12 @@ public class ExpenseRepositoryImpl implements ExpenseRepository {
                                 "JOIN e.project p " +
                                 "JOIN p.user u " +
                                 "WHERE u.id = :userId", Expense.class)
-                .setParameter("userId", userId)
-                .setFirstResult((int) pageable.getOffset())
-                .setMaxResults(pageable.getPageSize());
+                .setParameter("userId", userId);
+                if (pageable.isPaged()){
+                    query.setFirstResult((int) pageable.getOffset())
+                            .setMaxResults(pageable.getPageSize());
+                }
+
 
         TypedQuery<Long> countQuery = entityManager.createQuery(
                         "SELECT COUNT(e) " +
